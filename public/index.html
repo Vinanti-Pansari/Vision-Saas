@@ -5,19 +5,99 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Image Label Detection</title>
   <style>
-    body { font-family: Arial, sans-serif; max-width: 520px; margin: 60px auto; padding: 0 16px; color: #222; }
-    h1 { font-size: 1.6rem; }
-    form { border: 1px solid #ccc; padding: 20px; border-radius: 6px; }
-    input[type=file] { display: block; margin-bottom: 16px; }
-    button { padding: 8px 16px; background: #1a73e8; color: #fff; border: 0; border-radius: 4px; cursor: pointer; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background: linear-gradient(135deg, #eef2ff 0%, #f8fafc 50%, #ecfeff 100%);
+      color: #1e293b; padding: 24px;
+    }
+    .card {
+      width: 100%; max-width: 560px; background: #fff; border-radius: 20px; padding: 36px;
+      box-shadow: 0 10px 40px rgba(30, 41, 59, 0.10);
+    }
+    .badge {
+      display: inline-block; font-size: 12px; font-weight: 600; letter-spacing: .04em;
+      color: #4f46e5; background: #eef2ff; padding: 4px 10px; border-radius: 999px; margin-bottom: 14px;
+    }
+    h1 { margin: 0 0 8px; font-size: 1.7rem; line-height: 1.2; }
+    p.sub { margin: 0 0 24px; color: #64748b; line-height: 1.5; }
+    .drop {
+      display: block; border: 2px dashed #c7d2fe; border-radius: 14px; background: #f8faff;
+      padding: 28px 16px; text-align: center; cursor: pointer; transition: all .15s;
+    }
+    .drop:hover, .drop.drag { border-color: #6366f1; background: #eef2ff; }
+    .drop .icon { font-size: 34px; }
+    .drop .title { font-weight: 600; margin-top: 6px; }
+    .drop .hint { font-size: 13px; color: #94a3b8; margin-top: 4px; }
+    input[type=file] { display: none; }
+    #selected { display: none; }
+    #preview { display: block; width: 100%; max-height: 280px; object-fit: contain; border-radius: 12px; background: #f1f5f9; }
+    #fname { font-size: 13px; color: #64748b; margin-top: 8px; text-align: center; word-break: break-all; }
+    .btn {
+      display: block; width: 100%; margin-top: 14px; padding: 14px; font-size: 1rem; font-weight: 600;
+      text-align: center; border: 0; border-radius: 12px; cursor: pointer; transition: transform .1s, opacity .15s;
+    }
+    .btn:hover:not(:disabled) { transform: translateY(-1px); }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+    .btn.primary { color: #fff; background: linear-gradient(135deg, #6366f1, #4f46e5); }
+    .btn.secondary { color: #4f46e5; background: #eef2ff; }
+    footer { margin-top: 18px; text-align: center; font-size: 12px; color: #94a3b8; }
   </style>
 </head>
 <body>
-  <h1>Google Cloud Vision: Label Detection</h1>
-  <p>Choose an image to upload. The server will return the labels detected in it.</p>
-  <form action="/upload" method="POST" enctype="multipart/form-data">
-    <input type="file" name="pic" accept="image/*" required>
-    <button type="submit">Upload &amp; Detect Labels</button>
-  </form>
+  <main class="card">
+    <span class="badge">GOOGLE CLOUD VISION</span>
+    <h1>Image Label Detection</h1>
+    <p class="sub">Upload a photo and get a list of what Google Cloud Vision sees in it.</p>
+
+    <form id="form" action="/upload" method="POST" enctype="multipart/form-data">
+      <input type="file" id="pic" name="pic" accept="image/*" required>
+
+      <!-- Shown until an image is chosen -->
+      <label class="drop" id="drop" for="pic">
+        <div class="icon">🖼️</div>
+        <div class="title">Click to choose an image</div>
+        <div class="hint">or drag &amp; drop here · JPG, PNG, GIF, WebP · max 10 MB</div>
+      </label>
+
+      <!-- Shown after an image is chosen -->
+      <div id="selected">
+        <img id="preview" alt="Selected image preview">
+        <div id="fname"></div>
+        <label class="btn secondary" for="pic" id="change">Upload a different image</label>
+        <button type="submit" class="btn primary" id="btn">Detect Labels</button>
+      </div>
+    </form>
+    <footer>CS 651 · Exercise SaaS · Node.js + Express on Google App Engine</footer>
+  </main>
+
+  <script>
+    const input = document.getElementById('pic');
+    const drop = document.getElementById('drop');
+    const selected = document.getElementById('selected');
+    const preview = document.getElementById('preview');
+    const fname = document.getElementById('fname');
+    const btn = document.getElementById('btn');
+
+    function show(file) {
+      if (!file) return;
+      preview.src = URL.createObjectURL(file);
+      fname.textContent = file.name;
+      drop.style.display = 'none';
+      selected.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Detect Labels';
+    }
+    input.addEventListener('change', () => show(input.files[0]));
+    ['dragenter', 'dragover'].forEach(e => drop.addEventListener(e, ev => { ev.preventDefault(); drop.classList.add('drag'); }));
+    ['dragleave', 'drop'].forEach(e => drop.addEventListener(e, ev => { ev.preventDefault(); drop.classList.remove('drag'); }));
+    drop.addEventListener('drop', ev => {
+      if (ev.dataTransfer.files.length) { input.files = ev.dataTransfer.files; show(input.files[0]); }
+    });
+    document.getElementById('form').addEventListener('submit', () => {
+      btn.disabled = true; btn.textContent = 'Analyzing…';
+    });
+  </script>
 </body>
 </html>
