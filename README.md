@@ -8,6 +8,7 @@ CS 651 Exercise SaaS: upload an image and get a list of detected labels from the
 
 ## What it does
 
+
 1. The user opens the HTML form and chooses an image (JPG, PNG, GIF, WebP, max 10 MB).
 2. The form POSTs the image (`multipart/form-data`) to the Node.js + Express server.
 3. The server sends the image to Google Cloud Vision **label detection**.
