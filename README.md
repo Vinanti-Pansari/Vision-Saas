@@ -64,7 +64,7 @@ If you get a quota-project error: `gcloud auth application-default set-quota-pro
 Billing must be enabled on the Google Cloud project.
 
 ```
-gcloud config set project <YOUR_PROJECT_ID>
+gcloud config set project <project-id-here>
 gcloud services enable vision.googleapis.com appengine.googleapis.com cloudbuild.googleapis.com
 gcloud app create --region=us-west2   # first time only
 gcloud app deploy
