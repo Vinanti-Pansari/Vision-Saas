@@ -4,7 +4,7 @@ CS 651 Exercise SaaS: upload an image and get a list of detected labels from the
 
 - **Live app:** https://vision-saas.wl.r.appspot.com
 - **Wiki (documentation):** https://github.com/Vinanti-Pansari/Vision-Saas/wiki
-- **Team:** _add group member names here_
+
 
 ## What it does
 
